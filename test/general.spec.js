@@ -1,10 +1,12 @@
 const chai = require('chai');
+const mlog = require('mocha-logger');
+
 chai.use(require('chai-as-promised'));
 
 const assert = chai.assert;
-const { BracketsManager, JsonDatabase } = require('../dist');
+const { BracketsManager, LowDatabase } = require('../dist');
 
-const storage = new JsonDatabase();
+const storage = new LowDatabase();
 const manager = new BracketsManager(storage);
 
 describe('BYE handling', () => {
