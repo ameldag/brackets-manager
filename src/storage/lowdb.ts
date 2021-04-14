@@ -1,8 +1,7 @@
 import { CrudInterface, Table } from '../types';
 
 const low = require('lowdb');
-// const LocalStorage = require('lowdb/adapters/LocalStorage');
-const FileSync = require('lowdb/adapters/FileSync')
+const _ = require('lodash');
 const clone = require('rfdc')();
 
 export class LowDatabase implements CrudInterface {
@@ -15,7 +14,13 @@ export class LowDatabase implements CrudInterface {
      * @param filename An optional filename for the database.
      */
     constructor(filename?: string) {
-        const adapter = new FileSync(filename || 'db');
+        let Adapter; 
+        if(process.env.STORAGE === 'localstorage') 
+            Adapter = require('lowdb/adapters/LocalStorage');
+         else 
+            Adapter = require('lowdb/adapters/FileSync');
+        
+        const adapter = new Adapter(filename || 'db');
         this.internal = low(adapter);
         this.init();
     }
@@ -26,6 +31,14 @@ export class LowDatabase implements CrudInterface {
     private init(): void {
         this.internal.defaults({ participant: [], stage: [], group: [], round: [], match: [], match_game: []  })
         .write();
+    }
+
+    /**
+     * @param objValue
+     * @param srcValue
+     */
+    private assignCustomizer(objValue: any, srcValue: any): any {
+        return _.isObject(srcValue) ? _.assign(objValue, srcValue) : srcValue;
     }
 
     /**
@@ -155,7 +168,7 @@ export class LowDatabase implements CrudInterface {
         const collection = this.internal.get(table);
         if (typeof arg === 'number') {
             try {
-                collection.find({id: arg}).assign(value).write();
+                collection.find({id: arg}).assign(value, this.assignCustomizer).write();
                 return true;
             } catch (error) {
                 return false;
@@ -165,7 +178,7 @@ export class LowDatabase implements CrudInterface {
         const values = collection.filter(arg).value();
         if (!values) return false;
 
-        values.forEach((v: any) => collection.find({id: v.id}).assign(value).write());
+        values.forEach((v: any) => collection.find({id: v.id}).assignWith(value, this.assignCustomizer).write());
         return true;
     }
 
