@@ -45,6 +45,17 @@ create_npmrc:
     paths:
       - .npmrc
 
+build_package:
+  stage: build
+  before_script:
+    - npm install
+  script:
+    - STORAGE=localstorage npm run build
+  artifacts:
+    paths:
+      - dist
+
+
 # Publish the package. If the version in package.json has not yet been published, it will be
 # published to GitLab's NPM registry. If the version already exists, the publish command
 # will fail and the existing package will not be updated.
