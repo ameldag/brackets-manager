@@ -15,7 +15,7 @@ export class LowDatabase implements CrudInterface {
      */
     constructor(filename?: string) {
         let Adapter; 
-        if(process.env.STORAGE === 'localstorage') 
+        if(localStorage) 
             Adapter = require('lowdb/adapters/LocalStorage');
          else 
             Adapter = require('lowdb/adapters/FileSync');
