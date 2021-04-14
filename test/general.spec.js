@@ -1,5 +1,4 @@
 const chai = require('chai');
-const mlog = require('mocha-logger');
 
 chai.use(require('chai-as-promised'));
 

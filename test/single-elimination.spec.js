@@ -1,8 +1,8 @@
 const assert = require('chai').assert;
 const { Status } = require('brackets-model');
-const { BracketsManager, JsonDatabase } = require('../dist');
+const { BracketsManager, LowDatabase } = require('../dist');
 
-const storage = new JsonDatabase();
+const storage = new LowDatabase();
 const manager = new BracketsManager(storage);
 
 describe('Create single elimination stage', () => {
